@@ -17,3 +17,4 @@ public class ShippedState extends AbstractRentalState {
         return RentalStatus.IN_USE;
     }
 }
+// State transition listener
