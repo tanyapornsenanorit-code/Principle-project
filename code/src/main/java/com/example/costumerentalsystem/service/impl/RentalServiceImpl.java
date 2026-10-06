@@ -138,3 +138,4 @@ public class RentalServiceImpl implements RentalService {
         return (int) Math.max(1, ChronoUnit.DAYS.between(start, end));
     }
 }
+ 
