@@ -38,3 +38,9 @@ target/
 ### Local secrets ###
 .env
 code/target/
+
+target/
+*.class
+.DS_Store
+.idea/
+*.iml
