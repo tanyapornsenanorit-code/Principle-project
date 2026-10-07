@@ -46,7 +46,6 @@ public class RentalLifecycleServiceImpl implements RentalLifecycleService {
     public RentalResponse pay(Long rentalId, PaymentRequest request) {
         Rental rental = find(rentalId);
         RentalStatus from = rental.getStatus();
-        // ให้ state ตัดสินก่อน ถ้าทำไม่ได้จะ throw ตรงนี้ ยังไม่ได้สร้าง Payment
         RentalStatus to = stateFactory.stateOf(from).pay();
 
         Payment payment = new Payment();
@@ -103,7 +102,6 @@ public class RentalLifecycleServiceImpl implements RentalLifecycleService {
         return apply(rental, from, to);
     }
 
-    // เซฟสถานะใหม่ แล้ว publish event ให้ listener ทำต่อ
     private RentalResponse apply(Rental rental, RentalStatus from, RentalStatus to) {
         rental.setStatus(to);
         rentalRepository.save(rental);

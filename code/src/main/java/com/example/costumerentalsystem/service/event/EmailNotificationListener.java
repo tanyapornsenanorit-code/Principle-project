@@ -1,25 +1,26 @@
 package com.example.costumerentalsystem.service.event;
 
+import com.example.costumerentalsystem.service.EmailService;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.event.TransactionPhase;
-import org.springframework.transaction.event.TransactionalEventListener;
 
-import com.example.costumerentalsystem.service.NotificationService;
-
-// ส่งอีเมลหลัง commit เสร็จเท่านั้น ถ้า rollback จะได้ไม่ส่งเมลผิด
 @Component
 public class EmailNotificationListener {
 
-    private final NotificationService notificationService;
+    private final EmailService emailService;
 
-    public EmailNotificationListener(NotificationService notificationService) {
-        this.notificationService = notificationService;
+    public EmailNotificationListener(EmailService emailService) {
+        this.emailService = emailService;
     }
 
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void onRentalStatusChanged(RentalStatusChangedEvent event) {
-        String subject = "อัปเดตการเช่า #" + event.rentalId();
-        String body = "สถานะการเช่า #" + event.rentalId() + " ของคุณเปลี่ยนเป็น: " + event.to().getDisplayName();
-        notificationService.send(event.userEmail(), subject, body);
+    @Async
+    @EventListener
+    public void handleRentalStatusChanged(RentalStatusChangedEvent event) {
+        String subject = "อัปเดตสถานะการเช่าชุด - รายการ #" + event.rentalId();
+        String content = String.format("สวัสดีครับ/ค่ะ,\n\nรายการเช่าชุดของคุณได้รับการอัปเดตสถานะจาก %s เป็น %s เรียบร้อยแล้ว",
+                event.fromStatus(), event.toStatus());
+
+        emailService.sendEmail(event.userEmail(), subject, content);
     }
 }
