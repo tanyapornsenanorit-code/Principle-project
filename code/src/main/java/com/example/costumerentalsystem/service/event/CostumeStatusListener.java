@@ -1,13 +1,11 @@
 package com.example.costumerentalsystem.service.event;
 
-import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Component;
-
 import com.example.costumerentalsystem.domain.enums.CostumeStatus;
 import com.example.costumerentalsystem.domain.enums.RentalStatus;
 import com.example.costumerentalsystem.repository.CostumeRepository;
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
 
-// เปลี่ยนสถานะชุดตามสถานะใบเช่า ทำใน transaction เดียวกับตอน publish
 @Component
 public class CostumeStatusListener {
 
@@ -18,20 +16,18 @@ public class CostumeStatusListener {
     }
 
     @EventListener
-    public void onRentalStatusChanged(RentalStatusChangedEvent event) {
+    public void handleRentalStatusChanged(RentalStatusChangedEvent event) {
+        if (event.costumeId() == null) {
+            return;
+        }
+
         costumeRepository.findById(event.costumeId()).ifPresent(costume -> {
-            costume.setStatus(costumeStatusFor(event.to()));
+            if (event.toStatus() == RentalStatus.COMPLETED || event.toStatus() == RentalStatus.CANCELLED) {
+                costume.setStatus(CostumeStatus.AVAILABLE);
+            } else if (event.toStatus() == RentalStatus.SHIPPED || event.toStatus() == RentalStatus.IN_USE) {
+                costume.setStatus(CostumeStatus.UNAVAILABLE);
+            }
             costumeRepository.save(costume);
         });
     }
-
-    public static CostumeStatus costumeStatusFor(RentalStatus rentalStatus) {
-        return switch (rentalStatus) {
-            case PENDING_PAYMENT, PAID, SHIPPED -> CostumeStatus.RESERVED;
-            case IN_USE -> CostumeStatus.WAITING_RETURN;
-            case RETURNED -> CostumeStatus.LAUNDRY;
-            case COMPLETED, CANCELLED -> CostumeStatus.AVAILABLE;
-        };
-    }
 }
-// Update documentation for Event Listener
