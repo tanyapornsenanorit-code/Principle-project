@@ -164,3 +164,5 @@ git commit -m "Add README documentation"
 git push origin main
 ```
 
+#   R e n t a l   L i f e c y c l e   C o m p l e t e d  
+ 
