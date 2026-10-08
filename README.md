@@ -6,7 +6,7 @@
 
 | ลำดับ | ชื่อ-นามสกุล | รหัสนักศึกษา | Section | Branch | หน้าที่รับผิดชอบ |
 | :---: | :--- | :---: | :---: | :---: | :--- |
-| 1 | นางสาวศศิวิตรา วงศ์รุ่งอรุณเลิศ | 673380602-6 | 3 | sasiwitraw-eng | พัฒนา UI หลังบ้านฝั่ง Admin (Dashboard, เพิ่ม/ลบชุด, ใส่เลขพัสดุ) และเชื่อม Thymeleaf เข้ากับ Controller |
+| 1 | นางสาวศศิวิตรา วงศ์รุ่งอรุณเลิศ | 673380602-6 | 3 | sasiwitraw_673380602-6_03 | พัฒนา Backend และ REST API โดยรับผิดชอบ Service Layer, Rental System, Exception Handling, Swagger/OpenAPI และ Design Patterns พร้อมเชื่อม Controller กับ Service |
 | 2 | นางสาวธันยพร เสนาโนฤทธิ์ | 673380587-6 | 3 | tanyaporn_6733805876_03 | จัดโครงสร้างโปรเจกต์, ตั้งค่าฐานข้อมูล PostgreSQL & Flyway (V1-V3), สร้าง Entity/DTO/Mapper/Exception, ทำระบบแจ้งชำระเงิน และตกแต่งแก้ไขหน้าเว็บ HTML ให้สวยงาม (Thymeleaf) |
 | 3 | นางสาวทัดพิชา วะสาร | 673380584-2 | 3 | Thadpeecha_673380548-2_03 | ออกแบบและเชื่อมต่อฐานข้อมูล (Database Design & Backend Integration) สร้าง Data Entity, พัฒนา Business Logic (Service/JPA) และตั้งค่า Spring Security |
 
