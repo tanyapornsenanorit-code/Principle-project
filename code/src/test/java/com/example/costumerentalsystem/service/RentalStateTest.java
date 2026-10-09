@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-public class RentalLifecycleServiceImplTest {
+public class RentalStateTest {
 
     @Test
-    void testLifecycleEvents() {
-        // Unit test for lifecycle operations
+    void testStatePatternTransitions() {
+        // Unit test for State Pattern transitions
     }
 }

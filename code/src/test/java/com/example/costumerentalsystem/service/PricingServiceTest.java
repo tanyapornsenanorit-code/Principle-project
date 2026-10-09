@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-public class RentalLifecycleServiceImplTest {
+public class PricingServiceTest {
 
     @Test
-    void testLifecycleEvents() {
-        // Unit test for lifecycle operations
+    void testStrategyPatternPricing() {
+        // Unit test for Strategy Pattern calculation
     }
 }

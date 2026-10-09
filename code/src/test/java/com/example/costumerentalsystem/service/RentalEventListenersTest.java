@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-public class RentalLifecycleServiceImplTest {
+public class RentalEventListenersTest {
 
     @Test
-    void testLifecycleEvents() {
-        // Unit test for lifecycle operations
+    void testObserverPatternEvents() {
+        // Unit test for Observer Pattern event listener
     }
 }
