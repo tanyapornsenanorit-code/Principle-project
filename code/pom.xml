@@ -21,12 +21,14 @@
         <flyway.version>10.10.0</flyway.version>
     </properties>
    
-     <dependency>
-         <groupId>org.springdoc</groupId>
-         <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-         <version>2.5.0</version>
-     </dependency>
     <dependencies>
+        <!-- Springdoc OpenAPI (Swagger) -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.5.0</version>
+        </dependency>
+
         <!-- Web & MVC -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
