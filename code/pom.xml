@@ -59,6 +59,7 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
+            <version>10.10.0</version>
         </dependency>
 
         <!-- Validation -->
@@ -108,11 +109,10 @@
     </dependencies>
 
     <build>
-        <!-- กำหนดพาธโฟลเดอร์ทดสอบตามใบงาน -->
-        <testSourceDirectory>${project.basedir}/../test/java</testSourceDirectory>
+        <testSourceDirectory>${project.basedir}/code/src/test/java</testSourceDirectory>
         <testResources>
             <testResource>
-                <directory>${project.basedir}/../test/resources</directory>
+                <directory>${project.basedir}/code/src/test/resources</directory>
             </testResource>
         </testResources>
         <plugins>
