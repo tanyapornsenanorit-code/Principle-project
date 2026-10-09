@@ -127,6 +127,8 @@
             <p class="text-muted small">ติดตามสถานะ ชำระเงิน และรับเลขพัสดุสำหรับชุดที่คุณเช่า</p>
         </div>
 
+        <div class="alert alert-danger rounded-4" th:if="${error}" th:text="${error}"></div>
+
         <!-- หากไม่มีออเดอร์ หรือออเดอร์เป็น null -->
         <div th:if="${orders == null or #lists.isEmpty(orders)}" class="bg-white rounded-4 shadow-sm text-center py-5">
             <i class="bi bi-inbox display-4 d-block mb-3 text-pink"></i>
@@ -148,16 +150,16 @@
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 border-bottom border-light pb-4">
                         <div class="d-flex align-items-center">
-                            <img th:src="${order?.costume?.imageUrl ?: 'https://placehold.co/100x100?text=Costume'}" 
+                            <img th:src="${order?.costumeImageUrl ?: 'https://placehold.co/100x100?text=Costume'}" 
                                  class="rounded-4 me-3 shadow-sm" style="width: 80px; height: 80px; object-fit: cover;">
                             <div>
-                                <h5 class="fw-bold mb-1 text-dark" th:text="${order?.costume?.name ?: 'ไม่มีชื่อชุด'}">ชื่อชุด</h5>
+                                <h5 class="fw-bold mb-1 text-dark" th:text="${order?.costumeName ?: 'ไม่มีชื่อชุด'}">ชื่อชุด</h5>
                                 <div class="mb-1">
                                     <span class="text-muted small">สถานะรายการ: </span>
                                     <span class="badge bg-secondary-subtle text-dark fw-medium" th:text="${order?.status?.displayName ?: 'รอการอัปเดต'}">สถานะ</span>
                                 </div>
-                                <div class="small text-secondary" th:if="${order?.totalPrice != null}">
-                                    ยอดค่าเช่าสุทธิ: <strong class="text-pink" th:text="${order.totalPrice} + ' บาท'">500.00 บาท</strong>
+                                <div class="small text-secondary" th:if="${order?.totalAmount != null}">
+                                    ยอดชำระ (รวมมัดจำ): <strong class="text-pink" th:text="${order.totalAmount} + ' บาท'">500.00 บาท</strong>
                                 </div>
                             </div>
                         </div>
@@ -187,15 +189,15 @@
                         </div>
                         
                         <!-- จุดที่ 2: กำลังจัดส่ง -->
-                        <div class="step" th:classappend="${!#strings.isEmpty(order?.trackingNo)} ? (${order?.status?.name() == 'RETURNED'} ? 'completed' : 'active') : ''">
+                        <div class="step" th:classappend="${!#strings.isEmpty(order?.trackingNo)} ? (${(order?.status?.name() == 'RETURNED' or order?.status?.name() == 'COMPLETED')} ? 'completed' : 'active') : ''">
                             <div class="step-icon">
-                                <i th:class="${order?.status?.name() == 'RETURNED'} ? 'bi bi-check-lg fs-5' : 'bi bi-truck'"></i>
+                                <i th:class="${(order?.status?.name() == 'RETURNED' or order?.status?.name() == 'COMPLETED')} ? 'bi bi-check-lg fs-5' : 'bi bi-truck'"></i>
                             </div>
                             <div class="step-label">กำลังจัดส่ง</div>
                         </div>
                         
                         <!-- จุดที่ 3: คืนชุดเรียบร้อย -->
-                        <div class="step" th:classappend="${order?.status?.name() == 'RETURNED'} ? 'completed' : ''">
+                        <div class="step" th:classappend="${(order?.status?.name() == 'RETURNED' or order?.status?.name() == 'COMPLETED')} ? 'completed' : ''">
                             <div class="step-icon"><i class="bi bi-check-circle fs-5"></i></div>
                             <div class="step-label">คืนชุดเรียบร้อย</div>
                         </div>
