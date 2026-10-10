@@ -157,7 +157,7 @@
                     <tbody>
                         <tr th:each="r : ${rentals}">
                             <td class="text-center fw-bold text-secondary" th:text="${r.id}">1</td>
-                            <td class="fw-semibold" th:text="${r.costume != null ? r.costume.name : '-'}">ชุด</td>
+                            <td class="fw-semibold" th:text="${r.costumeName != null ? r.costumeName : '-'}">ชุด</td>
                             <td th:text="|${r.startDate} ถึง ${r.endDate}|">วันที่</td>
                             
                             <!-- 🟢 ป้ายสถานะการเช่าโทนสีพาสเทล -->
@@ -182,11 +182,37 @@
                                 <span th:if="${r.status.name() != 'PAID' and r.courier != null}" class="text-muted small">
                                     <span th:text="${r.courier}"></span> : <span th:text="${r.trackingNo != null ? r.trackingNo : '-'}"></span>
                                 </span>
-                                <span th:if="${r.status.name() == 'PENDING_PAYMENT'}" class="text-muted small">รอลูกค้าชำระเงิน</span>
+                                <span th:if="${r.status.name() == 'PENDING_PAYMENT' and (r.paymentStatus == null or r.paymentStatus.name() == 'REJECTED')}"
+                                      class="text-muted small">รอลูกค้าชำระเงิน / รอส่งหลักฐานใหม่</span>
+                                <span th:if="${r.paymentStatus != null and r.paymentStatus.name() == 'PENDING'}"
+                                      class="text-warning small fw-semibold">รอแอดมินตรวจสอบการชำระเงิน</span>
                             </td>
                             <!-- ปุ่มตามสถานะ -->
                             <td class="text-center">
+                                <div th:if="${r.paymentStatus != null and r.paymentStatus.name() == 'PENDING'}"
+                                     class="d-flex flex-column align-items-center gap-2 mb-3">
+                                    <a th:if="${r.slipImageUrl != null and !#strings.isEmpty(r.slipImageUrl)}"
+                                       th:href="${r.slipImageUrl}" target="_blank" rel="noopener"
+                                       class="btn btn-sm btn-outline-secondary">เปิดดูสลิป</a>
+                                    <span th:if="${r.slipImageUrl == null or #strings.isEmpty(r.slipImageUrl)}"
+                                          class="small text-muted">ไม่มีไฟล์สลิปแนบ</span>
+                                    <form th:action="@{/admin/rentals/payments/{id}/approve(id=${r.id})}"
+                                          method="post">
+                                        <button type="submit" class="btn btn-sm btn-success"
+                                                onclick="return confirm('ยืนยันว่าตรวจสอบการชำระเงินแล้ว?')">
+                                            อนุมัติ
+                                        </button>
+                                    </form>
+                                    <form th:action="@{/admin/rentals/payments/{id}/reject(id=${r.id})}"
+                                          method="post">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                onclick="return confirm('ปฏิเสธหลักฐานการชำระเงินนี้?')">
+                                            ปฏิเสธ
+                                        </button>
+                                    </form>
+                                </div>
                                 <form th:if="${r.status.name() == 'SHIPPED'}"
+
                                       th:action="@{/admin/rentals/start-use/{id}(id=${r.id})}" method="post">
                                     <button type="submit" class="btn btn-sm btn-outline-pink rounded-pill px-3 fw-bold" onclick="return confirm('ยืนยันว่าลูกค้าได้รับชุดแล้ว?')">
                                         <i class="bi bi-box-seam me-1"></i>ลูกค้าได้รับชุดแล้ว

@@ -17,21 +17,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.costumerentalsystem.domain.entity.Costume;
-import com.example.costumerentalsystem.repository.CostumeRepository;
 import com.example.costumerentalsystem.service.CostumeService;
 
 @Controller
 @RequestMapping("/costumes")
 public class CostumeController {
-    public CostumeController(CostumeService costumeService, CostumeRepository costumeRepository) {
+    public CostumeController(CostumeService costumeService) {
         this.costumeService = costumeService;
-        this.costumeRepository = costumeRepository;
     }
 
 
     private final CostumeService costumeService;
 
-    private final CostumeRepository costumeRepository;
 
     @GetMapping("/{id}")
     public String viewDetail(@PathVariable Long id, Model model) {
@@ -107,7 +104,7 @@ public class CostumeController {
                     existingCostume.setImageUrl("/uploads/" + fileName);
                 }
 
-                costumeRepository.save(existingCostume);
+                costumeService.saveCostume(existingCostume);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -118,7 +115,7 @@ public class CostumeController {
     // ลบชุดเช่า
     @GetMapping("/delete/{id}")
     public String deleteCostume(@PathVariable Long id) {
-        costumeRepository.deleteById(id);
+        costumeService.deleteCostume(id);
         return "redirect:/admin/dashboard";
     }
 }
