@@ -7,5 +7,6 @@ public record ShipmentRequest(
         String courier,
 
         @NotBlank(message = "กรุณาระบุเลขพัสดุ")
-        String trackingNo) {
+        String trackingNo
+) {
 }

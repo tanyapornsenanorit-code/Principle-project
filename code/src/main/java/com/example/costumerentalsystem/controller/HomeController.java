@@ -105,8 +105,7 @@ public class HomeController {
             session.setAttribute("loggedInUser", user);
             
             // เช็คเด้งไป Dashboard สำหรับ Admin
-            if ((user.getRole() == Role.ADMIN) ||
-                (user.getUsername() != null && user.getUsername().toLowerCase().contains("admin"))) {
+            if (user.getRole() == Role.ADMIN) {
                 return "redirect:/admin/dashboard";
             }
             return "redirect:/";

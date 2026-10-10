@@ -20,7 +20,9 @@ public class CostumeMapper {
                 costume.getPrice(),
                 costume.getDescription(),
                 costume.getStatus(),
-                costume.getStatus().getDisplayName(),
+                costume.getStatus() == null
+                        ? null
+                        : costume.getStatus().getDisplayName(),
                 costume.getImageUrl());
     }
 
