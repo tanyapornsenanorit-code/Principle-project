@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.costumerentalsystem.domain.entity.Costume;
-import com.example.costumerentalsystem.dto.response.CostumeResponse;
 import com.example.costumerentalsystem.domain.enums.CostumeStatus;
+import com.example.costumerentalsystem.dto.response.CostumeResponse;
+import com.example.costumerentalsystem.mapper.CostumeMapper;
 import com.example.costumerentalsystem.repository.CostumeRepository;
 
 @RestController
@@ -19,56 +19,57 @@ import com.example.costumerentalsystem.repository.CostumeRepository;
 public class CostumeApiController {
 
     private final CostumeRepository costumeRepository;
+    private final CostumeMapper costumeMapper;
 
-    public CostumeApiController(CostumeRepository costumeRepository) {
+    public CostumeApiController(
+            CostumeRepository costumeRepository,
+            CostumeMapper costumeMapper) {
         this.costumeRepository = costumeRepository;
+        this.costumeMapper = costumeMapper;
     }
 
-    // GET /api/costumes
-    // ดึงข้อมูลชุดทั้งหมด
+    // GET /api/v1/costumes
     @GetMapping
     public ResponseEntity<List<CostumeResponse>> getAllCostumes() {
-        return ResponseEntity.ok(costumeRepository.findAll().stream().map(this::toResponse).toList());
+        return ResponseEntity.ok(
+                costumeRepository.findAll()
+                        .stream()
+                        .map(costumeMapper::toResponse)
+                        .toList()
+        );
     }
 
-    // GET /api/costumes/{id}
-    // ดึงข้อมูลชุดตาม ID
+    // GET /api/v1/costumes/{id}
     @GetMapping("/{id}")
     public ResponseEntity<CostumeResponse> getCostumeById(
             @PathVariable Long id) {
-
         return costumeRepository.findById(id)
-                .map(this::toResponse).map(ResponseEntity::ok)
+                .map(costumeMapper::toResponse)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // GET /api/costumes/search?keyword=...
-    // ค้นหาจากชื่อชุดหรือชื่อหมวดหมู่
+    // GET /api/v1/costumes/search?keyword=...
     @GetMapping("/search")
     public ResponseEntity<List<CostumeResponse>> searchCostumes(
             @RequestParam String keyword) {
-
         return ResponseEntity.ok(
-                costumeRepository.searchByNameOrCategory(keyword).stream().map(this::toResponse).toList()
+                costumeRepository.searchByNameOrCategory(keyword)
+                        .stream()
+                        .map(costumeMapper::toResponse)
+                        .toList()
         );
     }
 
-    // GET /api/costumes/status/{status}
-    // ค้นหาชุดตามสถานะ
+    // GET /api/v1/costumes/status/{status}
     @GetMapping("/status/{status}")
     public ResponseEntity<List<CostumeResponse>> getCostumesByStatus(
             @PathVariable CostumeStatus status) {
-
         return ResponseEntity.ok(
-                costumeRepository.findByStatus(status).stream().map(this::toResponse).toList()
+                costumeRepository.findByStatus(status)
+                        .stream()
+                        .map(costumeMapper::toResponse)
+                        .toList()
         );
-    }
-
-    private CostumeResponse toResponse(Costume costume) {
-        Long categoryId = costume.getCategory() == null ? null : costume.getCategory().getId();
-        String categoryName = costume.getCategory() == null ? null : costume.getCategory().getName();
-        return new CostumeResponse(costume.getId(), costume.getName(), categoryId, categoryName,
-                costume.getPrice(), costume.getDescription(), costume.getStatus(),
-                costume.getStatus() == null ? null : costume.getStatus().name(), costume.getImageUrl());
     }
 }
