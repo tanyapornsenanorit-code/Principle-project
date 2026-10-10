@@ -36,7 +36,6 @@ public class RentalMapper {
                 payment != null ? payment.getStatus() : null,
                 shipment != null ? shipment.getCourier() : null,
                 shipment != null ? shipment.getTrackingNo() : null,
-                rental.getCreatedAt(),
-                payment != null ? payment.getSlipImageUrl() : null);
+                rental.getCreatedAt());
     }
 }

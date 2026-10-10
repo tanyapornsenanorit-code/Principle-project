@@ -2,6 +2,7 @@ package com.example.costumerentalsystem.controller;
 
 import java.security.Principal;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,12 +20,9 @@ import com.example.costumerentalsystem.service.UserService;
 @Controller
 @RequestMapping("/user")
 public class UserController {
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
-
-    private final UserService userService;
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/profile")
     public String showProfilePage(Model model, Principal principal) {
@@ -77,17 +75,5 @@ public class UserController {
             redirectAttributes.addFlashAttribute("errorMessage", "เกิดข้อผิดพลาด: " + e.getMessage());
         }
         return "redirect:/user/profile";
-    }
-@GetMapping("/rentals")
-    public String showUserRentalsPage(Model model, Principal principal) {
-        if (principal == null) {
-            return "redirect:/login";
-        }
-
-        String userEmail = principal.getName();
-        User user = userService.findByEmail(userEmail);
-        model.addAttribute("user", user);
-
-        return "user/rentals"; // หรือเปลี่ยนเป็น "redirect:/rentals" หากต้องการส่งไปหน้า /rentals
     }
 }

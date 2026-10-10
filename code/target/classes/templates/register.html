@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Costume Rental</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Pinyon+Script&family=Prompt:wght@300;400;500;600&display=swap');
+
+        :root {
+            --pink-main: #ff9fb3;
+            --pink-light: #ffc0cb;
+            --pink-dark: #f06292;
+            --pink-bg: #fff5f7;
+        }
+
+        body {
+            font-family: 'Montserrat', 'Prompt', sans-serif;
+            background-color: var(--pink-bg);
+            min-height: 100vh;
+        }
+
+        .font-princess {
+            font-family: 'Pinyon Script', cursive;
+            font-weight: normal;
+            color: var(--pink-dark);
+        }
+
+        .register-card {
+            max-width: 680px;
+            border-radius: 1rem;
+            border: none;
+            box-shadow: 0 10px 30px rgba(240, 98, 146, 0.12);
+        }
+
+        .form-section-title {
+            border-left: 4px solid var(--pink-dark);
+            padding-left: 8px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: #495057;
+            margin-bottom: 12px;
+        }
+
+        .btn-pink { 
+            background-color: var(--pink-main); 
+            border-color: var(--pink-main); 
+            color: white; 
+        }
+        .btn-pink:hover { 
+            background-color: var(--pink-dark); 
+            border-color: var(--pink-dark); 
+            color: white; 
+        }
+        
+        .text-pink { color: var(--pink-dark) !important; }
+    </style>
+</head>
+<body class="d-flex align-items-center justify-content-center py-5">
+
+    <div class="card register-card w-100 mx-3 bg-white">
+        <!-- Header เปลี่ยนเป็น Costume Rental -->
+        <div class="card-header bg-white text-center py-4 border-bottom-0 rounded-top">
+            <span class="font-princess display-4 text-pink d-block mb-1">Costume Rental</span>
+            <h4 class="fw-bold mb-0 text-dark">สมัครสมาชิกใหม่</h4>
+            <small class="text-muted">Princess Collection - กรอกข้อมูลเพื่อลงทะเบียนใช้งานและเช่าชุด</small>
+        </div>
+
+        <div class="card-body p-4 pt-2">
+            
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show small" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-1"></i> <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <form th:action="@{/register}" method="post">
+                
+                <div class="form-section-title">1. ข้อมูลเข้าสู่ระบบ</div>
+                <div class="row g-2 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold text-secondary">อีเมล (Username) *</label>
+                        <input type="email" name="username" class="form-control form-control-sm rounded-pill px-3" required placeholder="example@email.com">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold text-secondary">รหัสผ่าน *</label>
+                        <input type="password" name="password" class="form-control form-control-sm rounded-pill px-3" required minlength="6" placeholder="อย่างน้อย 6 ตัวอักษร">
+                    </div>
+                </div>
+
+                <div class="form-section-title mt-4">2. ข้อมูลส่วนตัว (สำหรับสัญญาเช่า)</div>
+                <div class="row g-2 mb-2">
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold text-secondary">ชื่อ-นามสกุล *</label>
+                        <input type="text" name="fullName" class="form-control form-control-sm rounded-pill px-3" required placeholder="นาย/นาง/นางสาว สมชาย ใจดี">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold text-secondary">เบอร์โทรศัพท์ *</label>
+                        <input type="tel" name="phone" class="form-control form-control-sm rounded-pill px-3" required placeholder="0812345678">
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label small fw-bold text-secondary">เลขบัตรประชาชน / Passport *</label>
+                        <input type="text" name="idCard" class="form-control form-control-sm rounded-pill px-3" required maxlength="13" placeholder="1234567890123">
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label small fw-bold text-secondary">ที่อยู่จัดส่ง / ติดต่อ *</label>
+                        <textarea name="address" class="form-control form-control-sm rounded-3 px-3 py-2" rows="2" required placeholder="บ้านเลขที่, ถนน, แขวง/ตำบล, เขต/อำเภอ, จังหวัด, รหัสไปรษณีย์"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-section-title mt-4">3. ข้อมูลสัดส่วนร่างกาย (เพื่อปรับแก้ชุดให้พอดี)</div>
+                <div class="row g-2 mb-4">
+                    <div class="col-6 col-md-4">
+                        <label class="form-label small text-secondary">ส่วนสูง (ซม.)</label>
+                        <input type="number" step="0.1" name="height" class="form-control form-control-sm rounded-pill px-3" placeholder="เช่น 165">
+                    </div>
+                    <div class="col-6 col-md-4">
+                        <label class="form-label small text-secondary">น้ำหนัก (กก.)</label>
+                        <input type="number" step="0.1" name="weight" class="form-control form-control-sm rounded-pill px-3" placeholder="เช่น 52">
+                    </div>
+                    <div class="col-4 col-md-4">
+                        <label class="form-label small text-secondary">รอบอก (นิ้ว)</label>
+                        <input type="number" step="0.1" name="chestSize" class="form-control form-control-sm rounded-pill px-3" placeholder="เช่น 34">
+                    </div>
+                    <div class="col-4 col-md-6">
+                        <label class="form-label small text-secondary">รอบเอว (นิ้ว)</label>
+                        <input type="number" step="0.1" name="waistSize" class="form-control form-control-sm rounded-pill px-3" placeholder="เช่น 26">
+                    </div>
+                    <div class="col-4 col-md-6">
+                        <label class="form-label small text-secondary">รอบสะโพก (นิ้ว)</label>
+                        <input type="number" step="0.1" name="hipSize" class="form-control form-control-sm rounded-pill px-3" placeholder="เช่น 36">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-pink btn-lg w-100 rounded-pill fs-6 fw-bold shadow-sm mb-3">
+                    <i class="bi bi-check-circle-fill me-1"></i> ยืนยันการสมัครสมาชิก
+                </button>
+            </form>
+
+            <div class="text-center pt-2 border-top">
+                <span class="small text-muted">มีบัญชีผู้ใช้งานอยู่แล้ว?</span>
+                <a href="/login" class="small fw-bold text-pink text-decoration-none ms-1">เข้าสู่ระบบ</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

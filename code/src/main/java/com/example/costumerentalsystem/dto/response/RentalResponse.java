@@ -25,6 +25,5 @@ public record RentalResponse(
         PaymentStatus paymentStatus,
         String courier,
         String trackingNo,
-        LocalDateTime createdAt,
-        String slipImageUrl) {
+        LocalDateTime createdAt) {
 }

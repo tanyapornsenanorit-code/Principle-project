@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Profile - Princess Collection</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Pinyon+Script&family=Prompt:wght@300;400;500;600&display=swap');
+
+        :root {
+            --pink-main: #ff9fb3;
+            --pink-light: #ffc0cb;
+            --pink-dark: #f06292;
+            --pink-bg: #fff5f7;
+            --pink-subtle: #ffe6ed;
+        }
+
+        body {
+            font-family: 'Montserrat', 'Prompt', sans-serif;
+            background-color: var(--pink-bg);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .font-princess {
+            font-family: 'Pinyon Script', cursive;
+            font-weight: normal;
+            color: var(--pink-dark);
+        }
+
+        .bg-pink { background-color: var(--pink-main) !important; color: white !important; }
+        .text-pink { color: var(--pink-dark) !important; }
+        .btn-pink { background-color: var(--pink-main); border-color: var(--pink-main); color: white; }
+        .btn-pink:hover { background-color: var(--pink-dark); border-color: var(--pink-dark); color: white; }
+        .btn-outline-pink { color: var(--pink-dark); border-color: var(--pink-main); }
+        .btn-outline-pink:hover { background-color: var(--pink-main); color: white; }
+
+        .custom-card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(240, 98, 146, 0.08);
+            background: #ffffff;
+        }
+        .avatar-circle {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--pink-main) 0%, var(--pink-dark) 100%);
+            color: #ffffff;
+            font-size: 42px;
+            border: 4px solid #ffffff;
+            box-shadow: 0 6px 15px rgba(240, 98, 146, 0.25);
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--pink-bg);
+            margin-bottom: 20px;
+        }
+        .section-icon-bg {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background-color: var(--pink-subtle);
+            color: var(--pink-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        
+        .bg-pink-subtle {
+            background-color: var(--pink-subtle) !important;
+            color: var(--pink-dark) !important;
+        }
+        .input-group-text {
+            background-color: #f8fafc;
+            border-right: none;
+            color: #64748b;
+        }
+        .form-control-icon {
+            border-left: none;
+        }
+        .form-control-icon:focus {
+            box-shadow: none;
+            border-color: #dee2e6;
+        }
+        .input-group:focus-within {
+            box-shadow: 0 0 0 0.25rem rgba(240, 98, 146, 0.15);
+            border-radius: 0.375rem;
+        }
+        .input-group:focus-within .input-group-text,
+        .input-group:focus-within .form-control {
+            border-color: var(--pink-main);
+        }
+        .sticky-sidebar {
+            top: 24px;
+        }
+        
+        .profile-btn-link {
+            color: var(--pink-dark) !important;
+            background-color: var(--pink-bg);
+            padding: 5px 15px;
+            border-radius: 50rem;
+            border: 1px solid var(--pink-light);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .profile-btn-link:hover {
+            background-color: var(--pink-main);
+            color: white !important;
+            transform: translateY(-1px);
+            border-color: var(--pink-main);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar (ตรงกันกับหน้า Index ทุกประการ) -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm border-bottom">
+        <div class="container">
+            <a class="navbar-brand font-princess fs-3 mb-0 text-pink" th:href="@{/}" href="/">
+                Costume Rental
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mt-1">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/}" href="/"><i class="bi bi-house-door me-1"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/orders}" href="/orders"><i class="bi bi-truck me-1"></i> Track Order</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/user/rentals}" href="/user/rentals"><i class="bi bi-bag-check me-1"></i> My Rentals</a>
+                    </li>
+                </ul>
+                
+                <div class="d-flex align-items-center mt-1">
+                    <!-- กรณีล็อกอินแล้ว -->
+                    <div th:if="${loggedInUser != null and loggedInUser != 'Guest'}" class="d-flex align-items-center">
+                        
+                        <!-- ปุ่มลิงก์ไปหน้า Profile -->
+                        <a th:href="@{/user/profile}" href="/user/profile" class="profile-btn-link me-2 small d-flex align-items-center">
+                            <i class="bi bi-person-circle fs-6 me-1"></i>
+                            <span>Profile</span>
+                        </a>
+
+                        <span class="text-secondary small me-2 d-none d-lg-inline">Hi, <strong th:text="${loggedInUser}">User</strong></span>
+                        <a th:href="@{/logout}" href="/logout" class="btn btn-outline-pink btn-sm rounded-pill">Logout</a>
+                    </div>
+
+                    <!-- กรณียังไม่ล็อกอิน -->
+                    <div th:if="${loggedInUser == null or loggedInUser == 'Guest'}">
+                        <a th:href="@{/login}" href="/login" class="btn btn-outline-pink btn-sm rounded-pill me-2">Login</a>
+                        <a th:href="@{/register}" href="/register" class="btn btn-pink btn-sm rounded-pill fw-bold text-white">Sign Up</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTAINER -->
+    <div class="container my-4 my-md-5 flex-grow-1">
+
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
+            <div>
+                <h2 class="h3 fw-bold text-dark mb-1">
+                    <i class="bi bi-person-bounding-box text-pink me-2"></i>Manage Profile
+                </h2>
+                <p class="text-muted small mb-0">Update your account information and shipping address for costume rentals.</p>
+            </div>
+            <a th:href="@{/}" href="/" class="btn btn-outline-secondary btn-sm shadow-sm text-nowrap rounded-pill px-3 align-self-start align-self-sm-center">
+                <i class="bi bi-arrow-left me-1"></i> Back to Home
+            </a>
+        </div>
+
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show border-0 shadow-sm rounded-3 mb-4" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-check-circle-fill fs-5 me-2"></i>
+                <span th:text="${successMessage}">Profile updated successfully.</span>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show border-0 shadow-sm rounded-3 mb-4" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-exclamation-triangle-fill fs-5 me-2"></i>
+                <span th:text="${errorMessage}">An error occurred while saving.</span>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div class="row g-4">
+            
+            <!-- Left: Profile Summary Card -->
+            <div class="col-12 col-lg-4">
+                <div class="card custom-card bg-white p-4 text-center sticky-top sticky-sidebar">
+                    <div class="position-relative d-inline-block mx-auto mb-3">
+                        <div class="avatar-circle rounded-circle d-flex align-items-center justify-content-center mx-auto">
+                            <i class="bi bi-person"></i>
+                        </div>
+                    </div>
+
+                    <h5 class="fw-bold text-dark mb-1" th:text="${user.fullName != null and !#strings.isEmpty(user.fullName) ? user.fullName : 'No Name Provided'}">Somchai Jaidee</h5>
+                    <p class="text-muted small mb-3 text-break" th:text="${user.email != null ? user.email : (user.username != null ? user.username : 'user@example.com')}">somchai@example.com</p>
+
+                    <div class="d-flex justify-content-center gap-2 mb-3">
+                        <span class="badge bg-pink-subtle border border-light rounded-pill px-3 py-2 fw-medium">
+                            <i class="bi bi-patch-check-fill me-1"></i> Member
+                        </span>
+                    </div>
+
+                    <hr class="my-3 text-muted opacity-25">
+
+                    <div class="text-start small text-muted">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span><i class="bi bi-telephone me-2 text-pink"></i>Phone:</span>
+                            <span class="fw-semibold text-dark" th:text="${user.phone != null and !#strings.isEmpty(user.phone) ? user.phone : '-'}">0812345678</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span><i class="bi bi-geo-alt me-2 text-pink"></i>Province:</span>
+                            <span class="fw-semibold text-dark" th:text="${user.province != null and !#strings.isEmpty(user.province) ? user.province : '-'}">Bangkok</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Edit Form Card -->
+            <div class="col-12 col-lg-8">
+                <div class="card custom-card bg-white p-4 p-md-5">
+                    <form th:action="@{/user/profile/update}" th:object="${user}" method="post">
+                        
+                        <div class="section-header">
+                            <div class="section-icon-bg"><i class="bi bi-person-vcard"></i></div>
+                            <h5 class="fw-bold text-dark mb-0 fs-6">1. Personal & Contact Information</h5>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-12 col-md-6">
+                                <label for="fullName" class="form-label fw-semibold small text-secondary">Full Name <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                    <input type="text" class="form-control form-control-icon" id="fullName" th:field="*{fullName}" placeholder="e.g., Somchai Jaidee" required>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label for="phone" class="form-label fw-semibold small text-secondary">Phone Number <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                                    <input type="tel" class="form-control form-control-icon" id="phone" th:field="*{phone}" placeholder="e.g., 0812345678" maxlength="10" required>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="email" class="form-label fw-semibold small text-secondary">Email / Username (Login)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                    <input type="email" class="form-control form-control-icon bg-light" id="email" th:field="*{email}" placeholder="example@email.com" readonly>
+                                    <span class="input-group-text bg-light text-muted"><i class="bi bi-lock-fill"></i></span>
+                                </div>
+                                <div class="form-text text-muted small mt-1"><i class="bi bi-info-circle me-1"></i>Email is your primary login account and cannot be modified directly.</div>
+                            </div>
+                        </div>
+
+                        <div class="section-header pt-2">
+                            <div class="section-icon-bg"><i class="bi bi-geo-alt-fill"></i></div>
+                            <h5 class="fw-bold text-dark mb-0 fs-6">2. Shipping & Contact Address</h5>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-12">
+                                <label for="addressLine" class="form-label fw-semibold small text-secondary">Address / Street / Alley <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-house-door"></i></span>
+                                    <textarea class="form-control form-control-icon" id="addressLine" th:field="*{addressLine}" rows="2" placeholder="e.g., 123/45 Sukhumvit Road" required></textarea>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label for="subDistrict" class="form-label fw-semibold small text-secondary">Sub-district <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-signpost-split"></i></span>
+                                    <input type="text" class="form-control form-control-icon" id="subDistrict" th:field="*{subDistrict}" placeholder="Sub-district" required>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label for="district" class="form-label fw-semibold small text-secondary">District <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-building"></i></span>
+                                    <input type="text" class="form-control form-control-icon" id="district" th:field="*{district}" placeholder="District" required>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label for="province" class="form-label fw-semibold small text-secondary">Province <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-map"></i></span>
+                                    <input type="text" class="form-control form-control-icon" id="province" th:field="*{province}" placeholder="Province" required>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label for="postalCode" class="form-label fw-semibold small text-secondary">Postal Code <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-mailbox"></i></span>
+                                    <input type="text" class="form-control form-control-icon" id="postalCode" th:field="*{postalCode}" placeholder="e.g., 10110" maxlength="5" pattern="[0-9]{5}" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+                            <a th:href="@{/}" href="/" class="btn btn-light border rounded-pill px-4 fw-semibold text-secondary">
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-pink rounded-pill px-4 fw-bold shadow-sm">
+                                <i class="bi bi-check2-circle me-1"></i> Save Changes
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-top py-4 text-center text-muted mt-auto">
+        <div class="container">
+            <small class="font-princess fs-4 d-block mb-1 text-pink">Costume Rental</small>
+            <small>Costume Rental System Project</small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,18 +18,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.costumerentalsystem.domain.entity.Costume;
+import com.example.costumerentalsystem.repository.CostumeRepository;
 import com.example.costumerentalsystem.service.CostumeService;
 
 @Controller
 @RequestMapping("/costumes")
 public class CostumeController {
-    public CostumeController(CostumeService costumeService) {
-        this.costumeService = costumeService;
-    }
 
+    @Autowired
+    private CostumeService costumeService;
 
-    private final CostumeService costumeService;
-
+    @Autowired
+    private CostumeRepository costumeRepository;
 
     @GetMapping("/{id}")
     public String viewDetail(@PathVariable Long id, Model model) {
@@ -104,7 +105,7 @@ public class CostumeController {
                     existingCostume.setImageUrl("/uploads/" + fileName);
                 }
 
-                costumeService.saveCostume(existingCostume);
+                costumeRepository.save(existingCostume);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -115,7 +116,7 @@ public class CostumeController {
     // ลบชุดเช่า
     @GetMapping("/delete/{id}")
     public String deleteCostume(@PathVariable Long id) {
-        costumeService.deleteCostume(id);
+        costumeRepository.deleteById(id);
         return "redirect:/admin/dashboard";
     }
 }
