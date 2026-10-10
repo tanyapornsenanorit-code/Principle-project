@@ -88,6 +88,13 @@
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
+        <!-- OpenAPI / Swagger UI -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.5.0</version>
+        </dependency>
+
         <!-- H2: ใช้สำหรับการทดสอบ -->
         <dependency>
             <groupId>com.h2database</groupId>
@@ -109,10 +116,10 @@
     </dependencies>
 
     <build>
-        <testSourceDirectory>${project.basedir}/code/src/test/java</testSourceDirectory>
+        <testSourceDirectory>${project.basedir}/src/test/java</testSourceDirectory>
         <testResources>
             <testResource>
-                <directory>${project.basedir}/code/src/test/resources</directory>
+                <directory>${project.basedir}/src/test/resources</directory>
             </testResource>
         </testResources>
         <plugins>

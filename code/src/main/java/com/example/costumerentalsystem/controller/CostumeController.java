@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,12 +23,15 @@ import com.example.costumerentalsystem.service.CostumeService;
 @Controller
 @RequestMapping("/costumes")
 public class CostumeController {
+    public CostumeController(CostumeService costumeService, CostumeRepository costumeRepository) {
+        this.costumeService = costumeService;
+        this.costumeRepository = costumeRepository;
+    }
 
-    @Autowired
-    private CostumeService costumeService;
 
-    @Autowired
-    private CostumeRepository costumeRepository;
+    private final CostumeService costumeService;
+
+    private final CostumeRepository costumeRepository;
 
     @GetMapping("/{id}")
     public String viewDetail(@PathVariable Long id, Model model) {

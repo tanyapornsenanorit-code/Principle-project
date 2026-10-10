@@ -17,11 +17,11 @@ class RentalLifecycleServiceTest {
     @DisplayName("เมื่อสถานะเป็น PENDING ไม่ควรรูปแบบการข้ามขั้นตอนไปเป็น RETURNED ได้")
     void testInvalidStatusTransitionThrowsException() {
         Rental rental = new Rental();
-        rental.setStatus(RentalStatus.PENDING);
+        rental.setStatus(RentalStatus.PENDING_PAYMENT);
 
         assertThrows(InvalidRentalTransitionException.class, () -> {
             // จำลองการเปลี่ยนสถานะผิดเงื่อนไข
-            if (rental.getStatus() == RentalStatus.PENDING) {
+            if (rental.getStatus() == RentalStatus.PENDING_PAYMENT) {
                 throw new InvalidRentalTransitionException(rental.getStatus(), "คืนชุด");
             }
         });
@@ -31,8 +31,8 @@ class RentalLifecycleServiceTest {
     @DisplayName("ตรวจสอบการสร้างตัวอย่างรายการเช่าเริ่มต้น")
     void testRentalInitialStatus() {
         Rental rental = new Rental();
-        rental.setStatus(RentalStatus.PENDING);
+        rental.setStatus(RentalStatus.PENDING_PAYMENT);
         
-        assertEquals(RentalStatus.PENDING, rental.getStatus());
+        assertEquals(RentalStatus.PENDING_PAYMENT, rental.getStatus());
     }
 }
