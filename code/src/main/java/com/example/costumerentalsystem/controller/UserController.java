@@ -2,7 +2,6 @@ package com.example.costumerentalsystem.controller;
 
 import java.security.Principal;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,9 +19,12 @@ import com.example.costumerentalsystem.service.UserService;
 @Controller
 @RequestMapping("/user")
 public class UserController {
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
-    @Autowired
-    private UserService userService;
+
+    private final UserService userService;
 
     @GetMapping("/profile")
     public String showProfilePage(Model model, Principal principal) {

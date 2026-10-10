@@ -3,7 +3,6 @@ package com.example.costumerentalsystem.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,9 +16,12 @@ import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class OrderController {
+    public OrderController(RentalRepository rentalRepository) {
+        this.rentalRepository = rentalRepository;
+    }
 
-    @Autowired
-    private RentalRepository rentalRepository;
+
+    private final RentalRepository rentalRepository;
 
     @GetMapping("/orders")
     public String myOrders(Model model, HttpSession session) {
