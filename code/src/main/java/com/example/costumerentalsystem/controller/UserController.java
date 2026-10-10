@@ -78,4 +78,16 @@ public class UserController {
         }
         return "redirect:/user/profile";
     }
+@GetMapping("/rentals")
+    public String showUserRentalsPage(Model model, Principal principal) {
+        if (principal == null) {
+            return "redirect:/login";
+        }
+
+        String userEmail = principal.getName();
+        User user = userService.findByEmail(userEmail);
+        model.addAttribute("user", user);
+
+        return "user/rentals"; // หรือเปลี่ยนเป็น "redirect:/rentals" หากต้องการส่งไปหน้า /rentals
+    }
 }
