@@ -1,66 +1,85 @@
-# 4. Sequence Diagram
+# 4. Sequence Diagrams
 
-## 4.1 Sequence Diagram: Create Rental Order & Payment
+## 4.1 Rental & Payment Process (การเช่าชุดและการชำระเงิน)
 
 ```mermaid
 sequenceDiagram
     autonumber
     actor Customer
-    participant Controller as RentalOrderController
-    participant Service as RentalOrderServiceImpl
-    participant Strategy as PaymentStrategy
-    participant Repo as RentalOrderRepository
+    participant WebUI as Frontend / Web UI
+    participant RentalCtrl as RentalController
+    participant RentalSvc as RentalService
+    participant DB as Database
+    participant PaymentGW as Payment Gateway
 
-    Customer->>Controller: createOrder(OrderRequestDTO)
-    activate Controller
-    Controller->>Service: createOrder(dto)
-    activate Service
-    
-    Service->>Repo: checkAvailability(costumeId, dates)
-    activate Repo
-    Repo-->>Service: isAvailable (true)
-    deactivate Repo
+    Customer->>WebUI: Select costume & rent dates
+    WebUI->>RentalCtrl: POST /api/v1/rentals (RentalRequest)
+    RentalCtrl->>RentalSvc: createRental(customerId, costumeId, dates)
+    RentalSvc->>DB: Check costume availability
+    DB-->>RentalSvc: Available
+    RentalSvc->>DB: Save RentalOrder (Status: PendingPayment)
+    DB-->>RentalSvc: Saved Order
+    RentalSvc-->>RentalCtrl: RentalOrderDTO
+    RentalCtrl-->>WebUI: 201 Created (Order details)
 
-    Service->>Service: calculateTotalPrice(days, price)
-    Service->>Repo: save(RentalOrder)
-    activate Repo
-    Repo-->>Service: RentalOrder (Status: PENDING)
-    deactivate Repo
-
-    Service-->>Controller: Order Created Response
-    deactivate Service
-    Controller-->>Customer: Display Order Summary & Payment Options
-    deactivate Controller
-
-    Customer->>Controller: payOrder(orderId, paymentDetails)
-    activate Controller
-    Controller->>Service: processPayment(orderId, strategy)
-    activate Service
-
-    Service->>Strategy: pay(amount)
-    activate Strategy
-    Strategy-->>Service: Payment Success (true)
-    deactivate Strategy
-
-    Service->>Repo: updateStatus(orderId, ACTIVE)
-    activate Repo
-    Repo-->>Service: Order Updated
-    deactivate Repo
-
-    Service-->>Controller: Payment Success Response
-    deactivate Service
-    Controller-->>Customer: Show Order Confirmation
-    deactivate Controller
+    Customer->>WebUI: Pay for rental
+    WebUI->>PaymentGW: Process payment
+    PaymentGW-->>WebUI: Payment Success
+    WebUI->>RentalCtrl: PUT /api/v1/rentals/{id}/pay
+    RentalCtrl->>RentalSvc: confirmPayment(orderId)
+    RentalSvc->>DB: Update status to PAID
+    DB-->>RentalSvc: Updated
+    RentalSvc-->>RentalCtrl: Success
+    RentalCtrl-->>WebUI: 200 OK (Payment Confirmed)
 ```
 
-## 4.2 Description
+## 4.2 Costume Return & Fine Calculation Process (การคืนชุดและการคำนวณค่าปรับ)
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Admin
+    participant WebUI as Frontend / Web UI
+    participant ReturnCtrl as RentalController
+    participant ReturnSvc as ReturnService
+    participant FineSvc as FineCalculationService
+    participant DB as Database
 
-ลำดับขั้นตอนการทำงานของการเช่าชุดและการชำระเงิน (Create Rental Order & Process Payment):
+    Admin->>WebUI: Input rental order ID & return condition
+    WebUI->>ReturnCtrl: POST /api/v1/rentals/{id}/return
+    ReturnCtrl->>ReturnSvc: processReturn(orderId, returnDate, condition)
+    ReturnSvc->>FineSvc: calculateFine(orderId, actualReturnDate)
+    
+    alt Return is Overdue or Damaged
+        FineSvc-->>ReturnSvc: Fine Amount Calculated
+        ReturnSvc->>DB: Update Order (Status: RETURNED_WITH_FINE, FineAmount)
+    else Returned On Time & Good Condition
+        FineSvc-->>ReturnSvc: Fine = 0
+        ReturnSvc->>DB: Update Order (Status: RETURNED)
+    end
 
-การสร้างคำสั่งเช่า: ลูกค้าส่งคำร้องขอสร้างคำสั่งเช่าผ่าน RentalOrderController
+    ReturnSvc->>DB: Update Costume Status to AVAILABLE
+    DB-->>ReturnSvc: Success
+    ReturnSvc-->>ReturnCtrl: ReturnSummaryDTO
+    ReturnCtrl-->>WebUI: 200 OK (Return Summary & Fine details)
+```
 
-การตรวจสอบความพร้อม: ระบบตรวจสอบความพร้อมของชุดในฐานข้อมูล หากว่าง จะคำนวณราคารวมและบันทึกคำสั่งเช่าสถานะ PENDING
+## 4.3 Costume Management Process by Admin (การจัดการข้อมูลชุดโดยผู้ดูแลระบบ)
 
-การชำระเงิน: ลูกค้าเลือกวิธีการชำระเงิน และระบบประมวลผลผ่าน PaymentStrategy (Strategy Pattern)
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Admin
+    participant WebUI as Frontend / Web UI
+    participant CostumeCtrl as CostumeController
+    participant CostumeSvc as CostumeService
+    participant DB as Database
 
-การยืนยัน: เมื่อชำระเงินสำเร็จ ระบบจะอัปเดตสถานะการเช่าเป็น ACTIVE และส่งผลยืนยันกลับไปยังลูกค้า
+    Admin->>WebUI: Fill new costume form & Submit
+    WebUI->>CostumeCtrl: POST /api/v1/costumes (CostumeDTO)
+    CostumeCtrl->>CostumeSvc: createCostume(CostumeDTO)
+    CostumeSvc->>DB: Save new costume record
+    DB-->>CostumeSvc: Saved Costume Entity
+    CostumeSvc-->>CostumeCtrl: CostumeResponseDTO
+    CostumeCtrl-->>WebUI: 201 Created
+    WebUI-->>Admin: Display success message & updated costume list
+```
