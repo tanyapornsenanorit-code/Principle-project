@@ -15,6 +15,7 @@ import com.example.costumerentalsystem.domain.enums.RentalStatus;
 import com.example.costumerentalsystem.dto.request.PaymentRequest;
 import com.example.costumerentalsystem.dto.request.ShipmentRequest;
 import com.example.costumerentalsystem.dto.response.RentalResponse;
+import com.example.costumerentalsystem.exception.ConflictException;
 import com.example.costumerentalsystem.exception.ResourceNotFoundException;
 import com.example.costumerentalsystem.mapper.RentalMapper;
 import com.example.costumerentalsystem.repository.RentalRepository;
@@ -43,21 +44,72 @@ public class RentalLifecycleServiceImpl implements RentalLifecycleService {
     }
 
     @Override
-    public RentalResponse pay(Long rentalId, PaymentRequest request) {
+    public RentalResponse submitPayment(Long rentalId, PaymentRequest request) {
         Rental rental = find(rentalId);
-        RentalStatus from = rental.getStatus();
-        RentalStatus to = stateFactory.stateOf(from).pay();
 
-        Payment payment = new Payment();
+        if (rental.getStatus() != RentalStatus.PENDING_PAYMENT) {
+            throw new ConflictException("รายการนี้ไม่อยู่ในสถานะรอชำระเงิน");
+        }
+
+        Payment payment = rental.getPayment();
+
+        if (payment != null && payment.getStatus() != PaymentStatus.REJECTED) {
+            throw new ConflictException(
+                    "รายการชำระเงินนี้ถูกส่งแล้วหรือกำลังรอตรวจสอบ");
+        }
+
+        if (payment == null) {
+            payment = new Payment();
+        }
+
         payment.setAmount(rental.getTotalPrice().add(rental.getDepositAmount()));
         payment.setPaymentMethod(request.method().name());
         payment.setPaymentType("RENTAL_FEE_AND_DEPOSIT");
         payment.setSlipImageUrl(request.slipImageUrl());
         payment.setPaymentDate(LocalDateTime.now());
-        payment.setStatus(PaymentStatus.VERIFIED);
-        rental.setPayment(payment);
+        payment.setStatus(PaymentStatus.PENDING);
 
+        rental.setPayment(payment);
+        rentalRepository.save(rental);
+
+        // ยังคง PENDING_PAYMENT จนกว่า Admin จะตรวจสอบและอนุมัติ
+        return rentalMapper.toResponse(rental);
+    }
+
+    @Override
+    public RentalResponse verifyPayment(Long rentalId) {
+        Rental rental = find(rentalId);
+
+        if (rental.getStatus() != RentalStatus.PENDING_PAYMENT
+                || rental.getPayment() == null
+                || rental.getPayment().getStatus() != PaymentStatus.PENDING) {
+            throw new ConflictException(
+                    "ไม่พบรายการชำระเงินที่รอการตรวจสอบ");
+        }
+
+        RentalStatus from = rental.getStatus();
+        RentalStatus to = stateFactory.stateOf(from).pay();
+
+        rental.getPayment().setStatus(PaymentStatus.VERIFIED);
         return apply(rental, from, to);
+    }
+
+    @Override
+    public RentalResponse rejectPayment(Long rentalId) {
+        Rental rental = find(rentalId);
+
+        if (rental.getStatus() != RentalStatus.PENDING_PAYMENT
+                || rental.getPayment() == null
+                || rental.getPayment().getStatus() != PaymentStatus.PENDING) {
+            throw new ConflictException(
+                    "ไม่พบรายการชำระเงินที่รอการตรวจสอบ");
+        }
+
+        rental.getPayment().setStatus(PaymentStatus.REJECTED);
+        rentalRepository.save(rental);
+
+        // ผู้ใช้สามารถส่งหลักฐานใหม่ได้ โดยรายการเช่ายังคงรอชำระเงิน
+        return rentalMapper.toResponse(rental);
     }
 
     @Override
