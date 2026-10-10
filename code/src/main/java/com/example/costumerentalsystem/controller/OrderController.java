@@ -21,7 +21,7 @@ public class OrderController {
     @Autowired
     private RentalRepository rentalRepository;
 
-    @GetMapping("/orders")
+    @GetMapping({"/orders", "/user/rentals"})
     public String myOrders(Model model, HttpSession session) {
         // 1. ดึง User จาก Session ที่เราใช้ล็อกอินจริงในระบบ
         User loggedInUser = (User) session.getAttribute("loggedInUser");
@@ -42,10 +42,10 @@ public class OrderController {
                           (currentUsername != null && currentUsername.toLowerCase().contains("admin"));
 
         if (isAdmin) {
-            // 👑 แอดมิน: เห็นรายการเช่าทั้งหมด
+            // แอดมิน: เห็นรายการเช่าทั้งหมด
             orders = allRentals;
         } else {
-            // 🟢 User ธรรมดา: กรองดูเฉพาะออเดอร์ของตัวเอง ("ของใครของมัน")
+            // User ธรรมดา: กรองดูเฉพาะออเดอร์ของตัวเอง ("ของใครของมัน")
             orders = allRentals.stream().filter(r -> {
                 try {
                     if (r.getUser() != null && r.getUser().getUsername() != null) {
