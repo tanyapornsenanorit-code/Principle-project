@@ -4,43 +4,56 @@
 
 ```mermaid
 graph TD
-    subgraph Frontend Client
+    subgraph Frontend_Client ["Frontend Client"]
         UI[Web User Interface / Single Page App]
     end
 
-    subgraph Backend Application Server
-        subgraph Controller Layer
+    subgraph Backend_Server ["Backend Application Server"]
+        subgraph Controller_Layer ["Controller Layer"]
             AuthCtrl[AuthController]
             CostumeCtrl[CostumeController]
             OrderCtrl[RentalOrderController]
         end
 
-        subgraph Service Layer
+        subgraph Service_Layer ["Service Layer"]
             AuthService[AuthService]
             CostumeService[CostumeService]
             OrderService[RentalOrderService]
             PaymentService[PaymentService]
         end
 
-        subgraph Repository Layer
+        subgraph Repository_Layer ["Repository Layer"]
             UserRepo[UserRepository]
             CostumeRepo[CostumeRepository]
             OrderRepo[RentalOrderRepository]
         end
     end
 
-    subgraph External Infrastructure
+    subgraph External_Infra ["External Infrastructure"]
         DB[(Relational Database)]
         PaymentAPI[External Payment Gateway API]
     end
 
-    UI -->|HTTP / REST JSON| Controller Layer
-    Controller Layer --> Service Layer
-    Service Layer --> Repository Layer
-    Repository Layer -->|JPA / JDBC| DB
+    UI -->|HTTP / REST API| AuthCtrl
+    UI -->|HTTP / REST API| CostumeCtrl
+    UI -->|HTTP / REST API| OrderCtrl
+
+    AuthCtrl --> AuthService
+    CostumeCtrl --> CostumeService
+    OrderCtrl --> OrderService
+
+    AuthService --> UserRepo
+    CostumeService --> CostumeRepo
+    OrderService --> OrderRepo
+    OrderService --> PaymentService
+
+    UserRepo -->|JPA / JDBC| DB
+    CostumeRepo -->|JPA / JDBC| DB
+    OrderRepo -->|JPA / JDBC| DB
     PaymentService -->|HTTPS API Call| PaymentAPI
 ```
 ## 7.2 Component Description
+
 Component Diagram แสดงโครงสร้างส่วนประกอบของระบบแบบ Layered Architecture:
 
 Frontend Client: ส่วนแสดงผลเว็บแอปพลิเคชันสำหรับโต้ตอบกับผู้ใช้งาน
