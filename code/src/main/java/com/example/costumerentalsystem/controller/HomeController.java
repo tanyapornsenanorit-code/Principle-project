@@ -50,7 +50,7 @@ public class HomeController {
             model.addAttribute("user", loggedInUser);
             model.addAttribute("role", loggedInUser.getRole() != null ? loggedInUser.getRole().name() : "USER");
             
-            // 🟢 เช็คสิทธิ์ Admin อย่างรัดกุม (รองรับทั้ง Role และอีเมลที่มีคำว่า admin)
+            //  เช็คสิทธิ์ Admin อย่างรัดกุม (รองรับทั้ง Role และอีเมลที่มีคำว่า admin)
             if (loggedInUser.getRole() == Role.ADMIN) {
                 isAdmin = true;
             } else if (loggedInUser.getUsername() != null && loggedInUser.getUsername().toLowerCase().contains("admin")) {
@@ -72,7 +72,7 @@ public class HomeController {
             costumes = costumeService.getAllCostumes();
         }
 
-        // 🟢 กรองข้อมูลชุดเช่าสำหรับลูกค้าทั่วไป
+        //  กรองข้อมูลชุดเช่าสำหรับลูกค้าทั่วไป
         if (isAdmin) {
             // ถ้าเป็นแอดมิน -> เห็นครบทุกชุดทุกสถานะ
         } else {

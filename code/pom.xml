@@ -19,8 +19,15 @@
     <properties>
         <java.version>21</java.version>
     </properties>
-
+   
     <dependencies>
+        <!-- Springdoc OpenAPI (Swagger) -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.5.0</version>
+        </dependency>
+
         <!-- Web & MVC -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -137,5 +144,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
