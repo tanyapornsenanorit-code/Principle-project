@@ -18,7 +18,6 @@
 
     <properties>
         <java.version>21</java.version>
-        <flyway.version>10.16.0</flyway.version>
     </properties>
    
     <dependencies>
@@ -119,5 +118,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
