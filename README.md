@@ -11,6 +11,8 @@
 | 3 | นางสาวทัดพิชา วะสาร | 673380584-2 | 3 | Thadpeecha_673380548-2_03 | ออกแบบและเชื่อมต่อฐานข้อมูล (Database Design & Backend Integration) สร้าง Data Entity, พัฒนา Business Logic (Service/JPA) และตั้งค่า Spring Security |
 
 ---
+link deploy: https://principle-project.onrender.com
+---
 
 ## 🌟 ฟีเจอร์หลักของระบบ (Key Features)
 
